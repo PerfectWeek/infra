@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: "{{ .Release.Name }}-server-svc"
+    labels:
+        app: "{{ template "infra.fullname" . }}-server"
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+    annotations:
+        cloud.google.com/app-protocols: '{"{{ .Values.server.service.port }}":"HTTP2"}'
+spec:
+    type: {{ .Values.server.service.type }}
+    ports:
+        - port: {{ .Values.server.service.port }}
+          targetPort: 1337
+          protocol: TCP
+          name: api
+    selector:
+        app: "{{ template "infra.fullname" . }}-server"
